@@ -1,0 +1,15 @@
+# Maven
+HospitalOperationsApp/target/
+
+# NetBeans / Ant
+HospitalOperationsGUI/build/
+HospitalOperationsGUI/dist/
+**/nbproject/private/
+nbactions.xml
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

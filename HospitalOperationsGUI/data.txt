@@ -1,0 +1,4 @@
+Hospital Operations Report
+============================
+Report: Year 1 Total Operations
+Year 1 Total: 1150

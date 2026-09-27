@@ -1,0 +1,52 @@
+name: Build and Release
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Build and test console app (Maven)
+        working-directory: HospitalOperationsApp
+        run: mvn -B package
+
+      - name: Install Ant
+        run: command -v ant || (sudo apt-get update && sudo apt-get install -y ant)
+
+      - name: Build GUI app (Ant)
+        working-directory: HospitalOperationsGUI
+        run: ant jar
+
+      - name: Collect jars
+        run: |
+          mkdir -p release
+          cp HospitalOperationsApp/target/HospitalOperationsApp.jar release/
+          cp HospitalOperationsGUI/dist/HospitalOperations.jar release/HospitalOperationsGUI.jar
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hospital-operations-jars
+          path: release/*.jar
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*.jar
+          generate_release_notes: true
